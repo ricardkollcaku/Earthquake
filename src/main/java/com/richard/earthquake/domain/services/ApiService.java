@@ -23,7 +23,7 @@ public class ApiService {
     void getDataFromApi() {
         streamProvider.subscribe(
          /*       Flux.just(1)*/
-                Flux.interval(Duration.ofSeconds(30))
+                Flux.interval(Duration.ofSeconds(3))
                         .flatMap(aLong -> getRequest()));
 
     }

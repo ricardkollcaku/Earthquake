@@ -28,7 +28,6 @@ public class StreamProvider {
                     System.out.println("Stream provider complete");
                     restartStream(flux);
                 })
-                .subscribeOn(Schedulers.parallel())
                 .doOnError(Throwable::printStackTrace)
                 .retry()
                 .subscribe();
