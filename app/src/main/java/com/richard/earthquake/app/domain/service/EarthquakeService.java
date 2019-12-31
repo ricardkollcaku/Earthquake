@@ -14,11 +14,5 @@ public class EarthquakeService {
     @Autowired
     EarthquakeRepo earthquakeRepo;
 
-    public Flux<Earthquake> findAllEarthquakes(Mono<String> userId) {
-        userService
-                .findUser(userId)
-
-
-    }
 
 }

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
@@ -25,17 +27,24 @@ public class UserController {
     public Mono<ResponseEntity<User>> create(@RequestBody User user) {
         return userService.createUser(user)
                 .map(ResponseEntity::ok)
-                .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_USER_EXIST).build()));
+                .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_USER_EXIST).build()))
+                .onErrorResume(throwable -> userErrorUtil.getResponseEntityAsMono(throwable));
 
 
     }
 
-    @PutMapping("/token//{token}")
+    @PutMapping("/token/{token}")
     public Mono<ResponseEntity<User>> setToken(@PathVariable String token, ServerWebExchange serverHttpRequest) {
         return userService.initToken(MyObjectMapper.getUserId(serverHttpRequest), token)
                 .map(ResponseEntity::ok)
-                .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_USER_EXIST).build()))
+                .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_TOKEN_EXIST).build()))
                 .onErrorResume(throwable -> userErrorUtil.getResponseEntityAsMono(throwable));
+    }
+
+
+    @GetMapping("")
+    public Mono<ResponseEntity<List<User>>> findAllUsers() {
+        return userService.findAll().collectList().map(ResponseEntity::ok);
     }
 
 

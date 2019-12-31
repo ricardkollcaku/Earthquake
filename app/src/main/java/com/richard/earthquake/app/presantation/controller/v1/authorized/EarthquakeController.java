@@ -10,9 +10,6 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/v1/earthquake")
 public class EarthquakeController {
 
-    @GetMapping
-    public Mono<ResponseEntity<Earthquake>> findAllEarthquakes(){
 
-    }
 
 }
