@@ -2,6 +2,7 @@ package com.richard.earthquake.processor.domain.util;
 
 import com.richard.earthquake.processor.data.dto.EarthquakeDto;
 import com.richard.earthquake.processor.data.model.Earthquake;
+import org.joda.time.DateTime;
 import org.locationtech.jts.geom.*;
 
 public class ObjectMapper {

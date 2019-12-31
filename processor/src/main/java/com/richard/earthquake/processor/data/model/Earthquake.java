@@ -1,16 +1,16 @@
 package com.richard.earthquake.processor.data.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.richard.earthquake.processor.data.jackson.deserializer.CustomDateTimeDeserializer;
 import com.richard.earthquake.processor.data.jackson.deserializer.GeometryDeserializer;
+import com.richard.earthquake.processor.data.jackson.serializer.CustomDateTimeSerializer;
 import com.richard.earthquake.processor.data.jackson.serializer.GeometrySerializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.locationtech.jts.geom.Geometry;
+import org.joda.time.DateTime;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("earthquake")

@@ -29,10 +29,17 @@ public class FilterController {
     }
 
     @PostMapping("")
-    public Mono<ResponseEntity<List<Filter>>> saveNewFilter(ServerWebExchange serverWebExchange, @RequestBody Filter filter) {
+    public Mono<ResponseEntity<List<Filter>>> saveFilter(ServerWebExchange serverWebExchange, @RequestBody Filter filter) {
         return filterService.saveFilter(MyObjectMapper.getUserId(serverWebExchange), filter)
                 .collectList()
                 .map(ResponseEntity::ok)
                 .onErrorResume(throwable -> errorUtil.getResponseEntityAsMono(throwable));
+    }
+
+    @DeleteMapping("")
+    public Mono<ResponseEntity<Filter>> removeFilter(ServerWebExchange serverWebExchange, @RequestBody Filter filter) {
+        return filterService.removeFilter(MyObjectMapper.getUserId(serverWebExchange), filter)
+                .map(ResponseEntity::ok);
+
     }
 }

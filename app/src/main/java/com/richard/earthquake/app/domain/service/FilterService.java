@@ -29,11 +29,15 @@ public class FilterService {
     }
 
     private Mono<User> updateOrAddUserFilter(User user, Filter filter) {
-        return Flux.fromIterable(user.getFilters())
-                .filter(filter1 -> !filter1.getName().equals(filter.getName()))
-                .collectList()
+        return getFilteredFilterList(user, filter)
                 .map(filters -> addFilterToList(filters, filter))
                 .map(filters -> addFiltersToUser(filters, user));
+    }
+
+    private Mono<List<Filter>> getFilteredFilterList(User user, Filter filter) {
+        return Flux.fromIterable(user.getFilters())
+                .filter(filter1 -> !filter1.getName().equals(filter.getName()))
+                .collectList();
     }
 
     private User addFiltersToUser(List<Filter> filters, User user) {
@@ -44,5 +48,18 @@ public class FilterService {
     private List<Filter> addFilterToList(List<Filter> filters, Filter filter) {
         filters.add(filter);
         return filters;
+    }
+
+    public Mono<Filter> removeFilter(Mono<String> userId, Filter filter) {
+        return userService.findUser(userId)
+                .flatMap(user -> removeFilterFromList(user, filter))
+                .flatMap(user -> userService.save(user))
+                .map(user -> filter);
+
+    }
+
+    private Mono<User> removeFilterFromList(User user, Filter filter) {
+        return getFilteredFilterList(user, filter)
+                .map(filters -> addFiltersToUser(filters, user));
     }
 }

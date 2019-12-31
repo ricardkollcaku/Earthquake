@@ -16,7 +16,7 @@ public class EarthquakeDto {
     private Geometry geometry;
     @Id
     private String id;
-
+    private long time;
     @Data
     @NoArgsConstructor
     public class Geometry {
