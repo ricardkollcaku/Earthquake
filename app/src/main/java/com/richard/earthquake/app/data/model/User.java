@@ -1,6 +1,5 @@
 package com.richard.earthquake.app.data.model;
 
-import com.sun.el.parser.Token;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 import java.util.Set;
+
 @Document("user")
 
 @Data

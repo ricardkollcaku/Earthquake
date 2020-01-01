@@ -2,7 +2,6 @@ package com.richard.earthquake.processor.domain;
 
 
 import com.mongodb.MongoClient;
-import com.mongodb.client.model.CreateCollectionOptions;
 import com.mongodb.reactivestreams.client.gridfs.GridFSBucket;
 import com.mongodb.reactivestreams.client.gridfs.GridFSBuckets;
 import com.richard.earthquake.processor.data.jackson.Converters;

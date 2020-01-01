@@ -3,24 +3,21 @@ package com.richard.earthquake.processor.domain.services;
 import com.richard.earthquake.processor.data.model.Earthquake;
 import com.richard.earthquake.processor.data.model.Notification;
 import com.richard.earthquake.processor.data.model.User;
-import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 
 @Service
 public class NotificationService {
+    private static long lastEarthquake = 0;
     @Autowired
     UserService userService;
-
     @Autowired
     StreamProvider streamProvider;
     @Autowired
     PushNotificationService pushNotificationService;
-    private static long lastEarthquake = 0;
 
     @PostConstruct
     void sendNotifications() {

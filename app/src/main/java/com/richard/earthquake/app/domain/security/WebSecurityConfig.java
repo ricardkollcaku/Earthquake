@@ -50,8 +50,6 @@ public class WebSecurityConfig {
         return http.build();
 
 
-
-
     }
 
     private AuthenticationWebFilter bearerAuthenticationFilter() {

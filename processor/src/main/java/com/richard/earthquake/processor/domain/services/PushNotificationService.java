@@ -9,7 +9,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.PostConstruct;
 

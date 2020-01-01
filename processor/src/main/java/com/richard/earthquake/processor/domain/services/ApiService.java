@@ -1,7 +1,7 @@
 package com.richard.earthquake.processor.domain.services;
 
-import com.richard.earthquake.processor.data.model.Earthquake;
 import com.richard.earthquake.processor.data.dto.EarthquakesDto;
+import com.richard.earthquake.processor.data.model.Earthquake;
 import com.richard.earthquake.processor.domain.util.ObjectMapper;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -21,7 +21,7 @@ public class ApiService {
     @PostConstruct
     void getDataFromApi() {
         streamProvider.subscribe(
-         /*       Flux.just(1)*/
+                /*       Flux.just(1)*/
                 Flux.interval(Duration.ofSeconds(3))
                         .flatMap(aLong -> getRequest()));
 

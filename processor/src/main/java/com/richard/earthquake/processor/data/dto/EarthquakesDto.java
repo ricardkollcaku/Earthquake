@@ -1,7 +1,8 @@
 package com.richard.earthquake.processor.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 

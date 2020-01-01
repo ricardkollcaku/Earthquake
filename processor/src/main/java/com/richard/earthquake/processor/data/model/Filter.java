@@ -8,17 +8,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Point;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Filter {
+    String name;
     @JsonSerialize(using = GeometrySerializer.class)
     @JsonDeserialize(using = GeometryDeserializer.class)
     private Geometry geometry;
     private double minMagnitude;
-    String name;
 
 
 }
