@@ -14,7 +14,9 @@ public class ErrorUtil<T> {
     }
 
     private DummyError getDummyError(Throwable throwable) {
-        return (DummyError) throwable;
+        if (throwable instanceof DummyError)
+            return (DummyError) throwable;
+        else return new DummyError(throwable);
     }
 
     private ResponseEntity<T> getResponseEntity(Throwable throwable) {

@@ -55,6 +55,7 @@ public class Converters {
         @Override
         public BasicDBObject convert(Geometry geometry) {
             GeoJsonWriter geoJsonWriter = new GeoJsonWriter();
+            geoJsonWriter.setEncodeCRS(false);
             return BasicDBObject.parse(geoJsonWriter.write(geometry));
 
         }

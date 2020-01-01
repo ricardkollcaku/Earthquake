@@ -9,12 +9,16 @@ import org.springframework.http.HttpStatus;
 public class DummyError extends Throwable {
     private String error;
     private String id;
-    private HttpStatus httpStatus;
+    private HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
     public DummyError(String error, String id, HttpStatus httpStatus) {
         this.error = error;
         this.id = id;
         this.httpStatus = httpStatus;
+    }
+
+    public DummyError(Throwable throwable) {
+        super(throwable);
     }
 
     public DummyError(String message, String error, String id, HttpStatus httpStatus) {

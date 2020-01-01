@@ -24,8 +24,8 @@ public class FilterController {
     public Mono<ResponseEntity<List<Filter>>> getAllFilters(ServerWebExchange serverWebExchange) {
         return filterService.findAllFilters(MyObjectMapper.getUserId(serverWebExchange))
                 .collectList()
-                .map(ResponseEntity::ok)
-                .onErrorResume(throwable -> errorUtil.getResponseEntityAsMono(throwable));
+                .map(ResponseEntity::ok);
+               // .onErrorResume(throwable -> errorUtil.getResponseEntityAsMono(throwable));
     }
 
     @PostMapping("")

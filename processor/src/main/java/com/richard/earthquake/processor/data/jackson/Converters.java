@@ -11,6 +11,8 @@ import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
 import org.springframework.lang.Nullable;
 
+import java.io.BufferedWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -55,6 +57,7 @@ public class Converters {
         @Override
         public BasicDBObject convert(Geometry geometry) {
             GeoJsonWriter geoJsonWriter = new GeoJsonWriter();
+geoJsonWriter.setEncodeCRS(false);
             return BasicDBObject.parse(geoJsonWriter.write(geometry));
 
         }
