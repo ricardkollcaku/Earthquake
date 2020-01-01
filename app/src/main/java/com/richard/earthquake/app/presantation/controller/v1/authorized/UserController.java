@@ -1,5 +1,8 @@
 package com.richard.earthquake.app.presantation.controller.v1.authorized;
 
+import com.richard.earthquake.app.data.dto.LoginDto;
+import com.richard.earthquake.app.data.dto.TokenDto;
+import com.richard.earthquake.app.data.dto.UserDto;
 import com.richard.earthquake.app.data.model.User;
 import com.richard.earthquake.app.domain.service.ErrorUtil;
 import com.richard.earthquake.app.domain.service.UserService;
@@ -21,11 +24,12 @@ public class UserController {
     UserService userService;
 
     @Autowired
-    ErrorUtil<User> userErrorUtil;
+    ErrorUtil<UserDto> userErrorUtil;
 
-    @PostMapping("")
-    public Mono<ResponseEntity<User>> create(@RequestBody User user) {
+    @PostMapping("/register")
+    public Mono<ResponseEntity<UserDto>> create(@RequestBody User user) {
         return userService.createUser(user)
+                .map(MyObjectMapper::map)
                 .map(ResponseEntity::ok)
                 .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_USER_EXIST).build()))
                 .onErrorResume(throwable -> userErrorUtil.getResponseEntityAsMono(throwable));
@@ -33,9 +37,20 @@ public class UserController {
 
     }
 
+    @PostMapping("/login")
+    public Mono<ResponseEntity<TokenDto>> login(@RequestBody LoginDto user) {
+        return userService.login(user.getEmail(), user.getPassword())
+                .map(MyObjectMapper::map)
+                .map(ResponseEntity::ok)
+                .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_INCORRECT_AUTH_DATA).build()));
+
+
+    }
+
     @PutMapping("/token/{token}")
-    public Mono<ResponseEntity<User>> setToken(@PathVariable String token, ServerWebExchange serverHttpRequest) {
+    public Mono<ResponseEntity<UserDto>> setToken(@PathVariable String token, ServerWebExchange serverHttpRequest) {
         return userService.initToken(MyObjectMapper.getUserId(serverHttpRequest), token)
+                .map(MyObjectMapper::map)
                 .map(ResponseEntity::ok)
                 .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_TOKEN_EXIST).build()))
                 .onErrorResume(throwable -> userErrorUtil.getResponseEntityAsMono(throwable));
@@ -43,8 +58,11 @@ public class UserController {
 
 
     @GetMapping("")
-    public Mono<ResponseEntity<List<User>>> findAllUsers() {
-        return userService.findAll().collectList().map(ResponseEntity::ok);
+    public Mono<ResponseEntity<List<UserDto>>> findAllUsers() {
+        return userService.findAll()
+                .map(MyObjectMapper::map)
+                .collectList()
+                .map(ResponseEntity::ok);
     }
 
 

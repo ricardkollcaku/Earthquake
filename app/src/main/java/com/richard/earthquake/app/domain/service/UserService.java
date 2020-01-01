@@ -3,9 +3,11 @@ package com.richard.earthquake.app.domain.service;
 import com.richard.earthquake.app.data.model.DummyError;
 import com.richard.earthquake.app.data.model.User;
 import com.richard.earthquake.app.data.repo.UserRepo;
+import com.richard.earthquake.app.domain.security.TokenProvider;
 import com.richard.earthquake.app.presantation.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,12 +21,17 @@ public class UserService {
     UserRepo userRepo;
     @Autowired
     ErrorUtil<User> errorUtil;
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    TokenProvider tokenProvider;
 
     public Mono<User> createUser(User user) {
         if (user.getFilters() == null)
             user.setFilters(new ArrayList<>());
         if (user.getTokens() == null)
             user.setTokens(new HashSet<>());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.findById(user.getEmail())
                 .flatMap(user1 -> errorUtil.performDummyError(new DummyError(ErrorMessage.USER_USER_EXIST, user.getEmail(), HttpStatus.CONFLICT)))
                 .switchIfEmpty(save(user));
@@ -53,5 +60,11 @@ public class UserService {
 
     public Flux<User> findAll() {
         return userRepo.findAll();
+    }
+
+    public Mono<String> login(String email, String password) {
+        return findUser(Mono.just(email))
+                .filter(user -> passwordEncoder.matches(password, user.getPassword()))
+                .map(user -> tokenProvider.createToken(user));
     }
 }
