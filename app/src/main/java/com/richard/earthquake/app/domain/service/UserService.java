@@ -27,15 +27,13 @@ public class UserService {
     TokenProvider tokenProvider;
 
     public Mono<User> createUser(User user) {
-        if (user.getFilters() == null)
-            user.setFilters(new ArrayList<>());
-        if (user.getTokens() == null)
-            user.setTokens(new HashSet<>());
+        user = setUserData(user);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.findById(user.getEmail())
-                .flatMap(user1 -> errorUtil.performDummyError(new DummyError(ErrorMessage.USER_USER_EXIST, user.getEmail(), HttpStatus.CONFLICT)))
+                .flatMap(user1 -> errorUtil.performDummyError(new DummyError(ErrorMessage.USER_USER_EXIST, user1.getEmail(), HttpStatus.CONFLICT)))
                 .switchIfEmpty(save(user));
     }
+
 
     public Mono<User> save(User user) {
         return userRepo.save(user);
@@ -66,5 +64,13 @@ public class UserService {
         return findUser(Mono.just(email))
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
                 .map(user -> tokenProvider.createToken(user));
+    }
+
+    private User setUserData(User user) {
+        if (user.getFilters() == null)
+            user.setFilters(new ArrayList<>());
+        if (user.getTokens() == null)
+            user.setTokens(new HashSet<>());
+        return user;
     }
 }

@@ -38,6 +38,7 @@ public class WebSecurityConfig {
                 .pathMatchers(HttpMethod.OPTIONS).permitAll()
                 .pathMatchers("/api/v1/users/login").permitAll()
                 .pathMatchers("/api/v1/users/register").permitAll()
+                .pathMatchers("/api/v1/heartBeat/*").permitAll()
                 .anyExchange()
                 .authenticated()
                 .and()

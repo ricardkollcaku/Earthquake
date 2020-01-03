@@ -25,6 +25,8 @@ public class UserController {
 
     @Autowired
     ErrorUtil<UserDto> userErrorUtil;
+    @Autowired
+    ErrorUtil<TokenDto> tokenErrorUtil;
 
     @PostMapping("/register")
     public Mono<ResponseEntity<UserDto>> create(@RequestBody User user) {
@@ -42,7 +44,8 @@ public class UserController {
         return userService.login(user.getEmail(), user.getPassword())
                 .map(MyObjectMapper::map)
                 .map(ResponseEntity::ok)
-                .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_INCORRECT_AUTH_DATA).build()));
+                .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_INCORRECT_AUTH_DATA).build()))
+                .onErrorResume(throwable -> tokenErrorUtil.getResponseEntityAsMono(throwable));
 
 
     }
