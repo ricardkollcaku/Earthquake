@@ -1,6 +1,6 @@
 package com.richard.earthquake.app.presantation.controller.v1;
 
-import com.richard.earthquake.app.data.dto.Device;
+import com.richard.earthquake.app.data.Device;
 import com.richard.earthquake.app.domain.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

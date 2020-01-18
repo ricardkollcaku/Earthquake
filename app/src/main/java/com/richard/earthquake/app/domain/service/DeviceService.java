@@ -1,6 +1,6 @@
 package com.richard.earthquake.app.domain.service;
 
-import com.richard.earthquake.app.data.dto.Device;
+import com.richard.earthquake.app.data.Device;
 import com.richard.earthquake.app.data.repo.DeviceRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

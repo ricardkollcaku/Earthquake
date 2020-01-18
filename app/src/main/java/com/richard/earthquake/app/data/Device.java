@@ -1,4 +1,4 @@
-package com.richard.earthquake.app.data.dto;
+package com.richard.earthquake.app.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

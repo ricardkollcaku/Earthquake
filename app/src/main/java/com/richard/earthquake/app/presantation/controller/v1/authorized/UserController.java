@@ -1,5 +1,6 @@
 package com.richard.earthquake.app.presantation.controller.v1.authorized;
 
+import com.richard.earthquake.app.data.dto.ChangePasswordDto;
 import com.richard.earthquake.app.data.dto.LoginDto;
 import com.richard.earthquake.app.data.dto.TokenDto;
 import com.richard.earthquake.app.data.dto.UserDto;
@@ -28,13 +29,14 @@ public class UserController {
     @Autowired
     ErrorUtil<TokenDto> tokenErrorUtil;
 
+
     @PostMapping("/register")
-    public Mono<ResponseEntity<UserDto>> create(@RequestBody User user) {
-        return userService.createUser(user)
+    public Mono<ResponseEntity<TokenDto>> create(@RequestBody User user) {
+        return userService.registerAutoLogin(user)
                 .map(MyObjectMapper::map)
                 .map(ResponseEntity::ok)
                 .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_USER_EXIST).build()))
-                .onErrorResume(throwable -> userErrorUtil.getResponseEntityAsMono(throwable));
+                .onErrorResume(throwable -> tokenErrorUtil.getResponseEntityAsMono(throwable));
 
 
     }
@@ -57,6 +59,22 @@ public class UserController {
                 .map(ResponseEntity::ok)
                 .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_TOKEN_EXIST).build()))
                 .onErrorResume(throwable -> userErrorUtil.getResponseEntityAsMono(throwable));
+    }
+
+    @PostMapping("/forgotPassword/{email}")
+    public Mono<ResponseEntity<String>> forgotPassword(@PathVariable String email) {
+        return userService.forgotPassword(email)
+                .map(MyObjectMapper::map)
+                .map(userDto -> ErrorMessage.FORGOT_PASSWORD_EMAIL_SEND)
+                .map(ResponseEntity::ok)
+                .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_USER_NOT_EXIST).build()));
+    }
+    @PostMapping("/changePassword")
+    public Mono<ResponseEntity<UserDto>> setToken(@RequestBody ChangePasswordDto changePasswordDto, ServerWebExchange serverHttpRequest) {
+        return userService.changePassword(MyObjectMapper.getUserId(serverHttpRequest), changePasswordDto)
+                .map(MyObjectMapper::map)
+                .map(ResponseEntity::ok)
+                .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.CONFLICT).header(ErrorMessage.ERROR, ErrorMessage.USER_PASSWORD_NOT_MACH).build()));
     }
 
 

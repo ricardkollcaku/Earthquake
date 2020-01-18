@@ -1,8 +1,10 @@
 package com.richard.earthquake.app.domain.service;
 
+import com.richard.earthquake.app.data.dto.ChangePasswordDto;
 import com.richard.earthquake.app.data.model.DummyError;
 import com.richard.earthquake.app.data.model.User;
 import com.richard.earthquake.app.data.repo.UserRepo;
+import com.richard.earthquake.app.domain.Util;
 import com.richard.earthquake.app.domain.security.TokenProvider;
 import com.richard.earthquake.app.presantation.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +27,12 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     @Autowired
     TokenProvider tokenProvider;
+    @Autowired
+    EmailService<User> emailService;
 
     public Mono<User> createUser(User user) {
         user = setUserData(user);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user = setUserNewPassword(user, user.getPassword());
         return userRepo.findById(user.getEmail())
                 .flatMap(user1 -> errorUtil.performDummyError(new DummyError(ErrorMessage.USER_USER_EXIST, user1.getEmail(), HttpStatus.CONFLICT)))
                 .switchIfEmpty(save(user));
@@ -71,6 +75,35 @@ public class UserService {
             user.setFilters(new ArrayList<>());
         if (user.getTokens() == null)
             user.setTokens(new HashSet<>());
+        return user;
+    }
+
+    public Mono<String> registerAutoLogin(User usr) {
+        return createUser(usr)
+                .map(user -> tokenProvider.createToken(user));
+    }
+
+    public Mono<User> forgotPassword(String email) {
+        return findUser(Mono.just(email))
+                .flatMap(this::generateNewPassSendingEmail)
+                .flatMap(this::save);
+    }
+
+    private Mono<User> generateNewPassSendingEmail(User user) {
+        String password = Util.generateRandomPassword();
+        user = setUserNewPassword(user, password);
+        return emailService.sendEmail(user.getEmail(), ErrorMessage.FORGOT_PASSWORD_SUBJECT, ErrorMessage.FORGOT_PASSWORD_SMS(user.getEmail(), password), user);
+    }
+
+    public Mono<User> changePassword(Mono<String> userId, ChangePasswordDto changePasswordDto) {
+        return findUser(userId)
+                .filter(user -> user.getPassword().matches(changePasswordDto.getNewPassword()))
+                .map(user -> setUserNewPassword(user, changePasswordDto.getNewPassword()))
+                .flatMap(this::save);
+    }
+
+    private User setUserNewPassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
         return user;
     }
 }

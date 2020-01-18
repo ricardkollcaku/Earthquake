@@ -35,10 +35,10 @@ public class WebSecurityConfig {
 
         http
                 .authorizeExchange()
-                .pathMatchers(HttpMethod.OPTIONS).permitAll()
                 .pathMatchers("/api/v1/users/login").permitAll()
                 .pathMatchers("/api/v1/users/register").permitAll()
                 .pathMatchers("/api/v1/heartBeat/*").permitAll()
+                .pathMatchers("/api/v1/users/forgotPassword/*").permitAll()
                 .anyExchange()
                 .authenticated()
                 .and()
