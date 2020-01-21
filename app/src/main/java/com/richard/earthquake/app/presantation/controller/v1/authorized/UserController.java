@@ -69,8 +69,9 @@ public class UserController {
                 .map(ResponseEntity::ok)
                 .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_USER_NOT_EXIST).build()));
     }
-    @PostMapping("/changePassword")
-    public Mono<ResponseEntity<UserDto>> setToken(@RequestBody ChangePasswordDto changePasswordDto, ServerWebExchange serverHttpRequest) {
+
+    @PutMapping("/changePassword")
+    public Mono<ResponseEntity<UserDto>> changePassword(@RequestBody ChangePasswordDto changePasswordDto, ServerWebExchange serverHttpRequest) {
         return userService.changePassword(MyObjectMapper.getUserId(serverHttpRequest), changePasswordDto)
                 .map(MyObjectMapper::map)
                 .map(ResponseEntity::ok)
@@ -86,5 +87,22 @@ public class UserController {
                 .map(ResponseEntity::ok);
     }
 
+    @PutMapping("/setNotification/{token}")
+    public Mono<ResponseEntity<UserDto>> setToken(@PathVariable Boolean token, ServerWebExchange serverHttpRequest) {
+        return userService.setNotification(MyObjectMapper.getUserId(serverHttpRequest), token)
+                .map(MyObjectMapper::map)
+                .map(ResponseEntity::ok)
+                .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_USER_NOT_EXIST_OR_AUTH_ERROR).build()))
+                .onErrorResume(throwable -> userErrorUtil.getResponseEntityAsMono(throwable));
+    }
+
+    @GetMapping("/currentUser")
+    public Mono<ResponseEntity<UserDto>> getCurrentUser(ServerWebExchange serverHttpRequest) {
+        return userService.findUser(MyObjectMapper.getUserId(serverHttpRequest))
+                .map(MyObjectMapper::map)
+                .map(ResponseEntity::ok)
+                .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_USER_NOT_EXIST_OR_AUTH_ERROR).build()));
+
+    }
 
 }

@@ -39,7 +39,7 @@ public class MyObjectMapper {
     }
 
     public static UserDto map(User user) {
-        return new UserDto(user.getEmail(), user.getFirstName(), user.getLastName());
+        return new UserDto(user.getEmail(), user.getFirstName(), user.getLastName(),user.getIsNotificationEnabled());
     }
 
     public static TokenDto map(String s) {

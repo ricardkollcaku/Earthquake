@@ -106,4 +106,15 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(newPassword));
         return user;
     }
+
+    public Mono<User> setNotification(Mono<String> userId, Boolean notification) {
+        return findUser(userId)
+                .map(user -> setNotificationToUser(user, notification))
+                .flatMap(this::save);
+    }
+
+    private User setNotificationToUser(User user, Boolean notification) {
+        user.setIsNotificationEnabled(notification);
+        return user;
+    }
 }

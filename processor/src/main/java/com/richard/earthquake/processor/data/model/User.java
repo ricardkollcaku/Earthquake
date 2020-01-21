@@ -23,5 +23,7 @@ public class User {
     private String password;
     private List<Filter> filters;
     private Set<String> tokens;
+    private Boolean isNotificationEnabled = true;
+
 
 }
