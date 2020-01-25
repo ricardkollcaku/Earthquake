@@ -3,7 +3,6 @@ package com.richard.earthquake.app.domain.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -12,6 +11,7 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
+import org.springframework.security.web.server.authentication.HttpBasicServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authorization.HttpStatusServerAccessDeniedHandler;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.server.ServerWebExchange;
@@ -45,7 +45,8 @@ public class WebSecurityConfig {
                 .exceptionHandling().accessDeniedHandler(new HttpStatusServerAccessDeniedHandler(HttpStatus.BAD_REQUEST))
                 .and()
                 .addFilterAt(bearerAuthenticationFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
-                .exceptionHandling().accessDeniedHandler(new HttpStatusServerAccessDeniedHandler(HttpStatus.BAD_REQUEST))
+                .exceptionHandling().authenticationEntryPoint(new HttpBasicServerAuthenticationEntryPoint())
+
 
         ;
         return http.build();
@@ -62,9 +63,9 @@ public class WebSecurityConfig {
         bearerAuthenticationFilter = new AuthenticationWebFilter(authManager);
 
 
-        bearerAuthenticationFilter.setAuthenticationConverter(tokenFilter);
+        //   bearerAuthenticationFilter.setAuthenticationConverter(tokenFilter);
+        bearerAuthenticationFilter.setServerAuthenticationConverter(tokenFilter);
         bearerAuthenticationFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/api/**"));
-
         return bearerAuthenticationFilter;
     }
 

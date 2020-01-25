@@ -10,5 +10,13 @@ import lombok.NoArgsConstructor;
 public class ChangePasswordDto {
     private String oldPassword;
     private String newPassword;
+
+    @Override
+    public String toString() {
+        return "ChangePasswordDto{" +
+                "oldPassword='" + oldPassword + '\'' +
+                ", newPassword='" + newPassword + '\'' +
+                '}';
+    }
 }
 

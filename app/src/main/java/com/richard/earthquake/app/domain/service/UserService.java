@@ -96,8 +96,9 @@ public class UserService {
     }
 
     public Mono<User> changePassword(Mono<String> userId, ChangePasswordDto changePasswordDto) {
+        System.out.println(changePasswordDto.toString());
         return findUser(userId)
-                .filter(user -> user.getPassword().matches(changePasswordDto.getNewPassword()))
+                .filter(user -> passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword()))
                 .map(user -> setUserNewPassword(user, changePasswordDto.getNewPassword()))
                 .flatMap(this::save);
     }
