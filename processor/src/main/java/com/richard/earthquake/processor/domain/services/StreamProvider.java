@@ -6,6 +6,7 @@ import reactor.core.publisher.DirectProcessor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.PostConstruct;
 import java.time.Duration;
 import java.util.function.Predicate;
 
@@ -19,6 +20,11 @@ public class StreamProvider {
         emitterProcessor.subscribe();
         emitterProcessor.doOnError(Throwable::printStackTrace);
         emitterProcessor.doOnComplete(() -> System.out.println("emmiter processor completed"));
+    }
+
+    @PostConstruct
+    private void startStream() {
+        getStream().subscribe();
     }
 
     public void subscribe(Flux<Earthquake> flux) {
@@ -47,6 +53,10 @@ public class StreamProvider {
 
     public Flux<Earthquake> getStream() {
         return emitterProcessor;
+    }
+
+    public void onNext(Earthquake earthquake) {
+        emitterProcessor.onNext(earthquake);
     }
 
 

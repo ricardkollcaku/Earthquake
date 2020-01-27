@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,6 +20,7 @@ public class Filter {
     @JsonSerialize(using = GeoJsonSerializer.class)
     @JsonDeserialize(using = GeoJsonDeserializer.class)
     private GeoJsonPolygon geometry;
+    List<String> countries;
     private double minMagnitude;
 
 

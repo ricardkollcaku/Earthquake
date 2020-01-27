@@ -26,14 +26,14 @@ public class EarthquakeController {
     @Autowired
     ErrorUtil<List<Earthquake>> errorUtil;
 
-    @GetMapping()
+    @GetMapping("/all")
     public Mono<ResponseEntity<List<Earthquake>>> findAllEarthquakes(ServerWebExchange serverHttpRequest, @RequestParam Integer pageNumber, @RequestParam Integer elementPerPage) {
+        System.out.println(pageNumber + " " + elementPerPage);
         return earthquakeService.getAllUserEarthquakesPageable(MyObjectMapper.getUserId(serverHttpRequest), PageRequest.of(pageNumber, elementPerPage))
                 .collectList()
                 .map(ResponseEntity::ok)
                 .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.EARTHQUAKE_NO_EARTHQUAKES_FOR_USER).build()))
                 ;
-
     }
 
 

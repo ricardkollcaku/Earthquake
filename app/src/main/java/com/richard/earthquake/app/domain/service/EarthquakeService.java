@@ -6,6 +6,7 @@ import com.richard.earthquake.app.data.model.User;
 import com.richard.earthquake.app.data.repo.EarthquakeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -41,7 +42,8 @@ public class EarthquakeService {
         Query query = new Query();
         query.addCriteria(new Criteria().orOperator(criterias));
         query.with(pageable);
-        System.out.println(query.getQueryObject().toString());
+        query.with(Sort.by(new Sort.Order(Sort.Direction.DESC, "properties.time")));
+        //  System.out.println(query.getQueryObject().toString());
         return query;
     }
 
