@@ -54,10 +54,10 @@ public class ProcessorApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
 
-/*        earthquakeRepo.saveAll(earthquakeRepo.findAll().map(earthquake -> {
+        earthquakeRepo.saveAll(earthquakeRepo.findAll().map(earthquake -> {
             earthquake.setCountry(earthquake.getProperties().getPlace().substring(earthquake.getProperties().getPlace().lastIndexOf(" ") + 1));
             return earthquake;
-        })).log().subscribe();*/
+        })).log().subscribe();
 /*        earthquakeRepo.findAll().map(earthquake -> earthquake.getProperties().getPlace())
                 .map(s -> s.substring(s.lastIndexOf(" ") + 1))
                 .distinct()

@@ -22,21 +22,23 @@ public class ApiService {
     void getDataFromApi() {
         streamProvider.subscribe(
                 /*       Flux.just(1)*/
-                Flux.interval(Duration.ofSeconds(3))
+                Flux.interval(Duration.ofSeconds(30))
                         .flatMap(aLong -> getRequest()));
+        //https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php;
 
     }
 
     private Flux<Earthquake> getRequest() {
         DateTime dateTime = DateTime.now(DateTimeZone.UTC);
         String currentTime, previewTime;
-        currentTime = dateTime.toString();
-        previewTime = dateTime.minusMinutes(30).toString();
+        currentTime = dateTime.minusSeconds(0).toString();
+        previewTime = dateTime.minusHours(1).toString();
+
         return WebClient.create("https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=" + previewTime + "&endtime=" + currentTime)
                 .get()
                 .exchange()
                 .flatMap(clientResponse -> clientResponse.bodyToMono(EarthquakesDto.class))
                 .flatMapIterable(EarthquakesDto::getEarthquakes)
-                .map(ObjectMapper::map);
+                .map(ObjectMapper::map).log();
     }
 }

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import javax.annotation.PostConstruct;
-import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,9 +37,15 @@ public class CountryService {
 
     private Flux<Country> getDistinctCountries() {
         return earthquakeService.findDistinctByCountry()
-                .map(Country::new)
+                .map(this::createCountryObject)
                 .map(this::addCountriesInSet)
                 ;
+    }
+
+    private Country createCountryObject(String s) {
+        //Todo;
+        Country country = new Country(s, s);
+        return country;
     }
 
     private Country addCountriesInSet(Country country) {

@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Country {
     @Id
     String country;
+    String countryCode;
 
 
 }

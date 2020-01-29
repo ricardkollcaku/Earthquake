@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 public class Earthquake {
     private String country;
+    private String countryCode;
     private String type;
     private Properties properties;
     @JsonSerialize(using = GeometrySerializer.class)
