@@ -15,5 +15,7 @@ public class Country {
     String country;
     String countryCode;
 
-
+    public Country(String country) {
+        this.country = country;
+    }
 }

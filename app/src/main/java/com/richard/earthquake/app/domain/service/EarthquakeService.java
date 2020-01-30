@@ -22,18 +22,15 @@ public class EarthquakeService {
     UserService userService;
     @Autowired
     EarthquakeRepo earthquakeRepo;
-
     @Autowired
     ReactiveMongoTemplate reactiveMongoTemplate;
 
-
     public Flux<Earthquake> getAllUserEarthquakesPageable(Mono<String> userId, Pageable pageable) {
-        return userService.findUser(userId)
-                .flatMapIterable(User::getFilters)
-                .map(filter -> getEarthquakeCriteria(filter))
-                .collectList()
+        return userService.findUser(userId).flatMapIterable(User::getFilters)
+                .map(filter -> getEarthquakeCriteria(filter)).collectList()
                 .map(criteria -> getFiltersQuery(criteria, pageable))
-                .flatMapMany(query -> reactiveMongoTemplate.find(query, Earthquake.class));
+                .flatMapMany(query -> reactiveMongoTemplate.find(query, Earthquake.class))
+                .switchIfEmpty(getAllFilteredEarthquake(pageable, null, null));
     }
 
     private Query getFiltersQuery(List<Criteria> criteria, Pageable pageable) {
@@ -43,14 +40,35 @@ public class EarthquakeService {
         query.addCriteria(new Criteria().orOperator(criterias));
         query.with(pageable);
         query.with(Sort.by(new Sort.Order(Sort.Direction.DESC, "properties.time")));
-        //  System.out.println(query.getQueryObject().toString());
         return query;
     }
 
     private Criteria getEarthquakeCriteria(Filter filter) {
-        return Criteria.where("geometry").within(filter.getGeometry()).andOperator(Criteria.where("properties.mag").gte(filter.getMinMagnitude()));
+        return Criteria.where("geometry").within(filter.getGeometry())
+                .andOperator(Criteria.where("properties.mag").gte(filter.getMinMagnitude()));
 
     }
 
+    public Flux<Earthquake> getAllFilteredEarthquake(Pageable of, String country, Integer mag) {
+        Criteria criteria = getCriteria(country, mag);
+        Query query = new Query();
+        if (criteria != null)
+            query.addCriteria(criteria);
+        query.with(of);
+        query.with(Sort.by(new Sort.Order(Sort.Direction.DESC, "properties.time")));
+        return reactiveMongoTemplate.find(query, Earthquake.class);
+    }
+
+    private Criteria getCriteria(String country, Integer mag) {
+        if (country == null && mag == null)
+            return null;
+
+        if (mag != null && country == null)
+            return Criteria.where("properties.mag").gte(mag);
+
+        if (country != null && mag == null)
+            return Criteria.where("country").is(country);
+        return Criteria.where("properties.mag").gte(mag).andOperator(Criteria.where("country").is(country));
+    }
 
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 
@@ -28,5 +29,9 @@ public class EarthquakeService {
 
     public Flux<String> findDistinctByCountry() {
         return reactiveMongoTemplate.findDistinct("country", Earthquake.class, String.class);
+    }
+
+    public Mono<Earthquake> getLastEarthquake() {
+        return earthquakeRepo.findTopByOrderByModifiedTimeDesc();
     }
 }

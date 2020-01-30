@@ -21,6 +21,7 @@ public class Earthquake {
     private String countryCode;
     private String type;
     private Properties properties;
+    private long modifiedTime;
     @JsonSerialize(using = GeometrySerializer.class)
     @JsonDeserialize(using = GeometryDeserializer.class)
     private Geometry geometry;

@@ -11,7 +11,6 @@ import javax.annotation.PostConstruct;
 
 @Service
 public class NotificationService {
-    private static long lastEarthquake = 0;
     @Autowired
     UserService userService;
     @Autowired
@@ -22,8 +21,6 @@ public class NotificationService {
     @PostConstruct
     void sendNotifications() {
         streamProvider.getStream()
-                .filter(earthquake -> earthquake.getProperties().getTime() > lastEarthquake || earthquake.getProperties().getUpdated() > lastEarthquake)
-                .map(this::updateLastEarthquake)
                 .flatMap(earthquake -> filterBuyUser(earthquake)
                         .map(user -> sendNotificationsToUser(earthquake, user)));
 
@@ -44,8 +41,5 @@ public class NotificationService {
                         .map(filters -> user));
     }
 
-    private Earthquake updateLastEarthquake(Earthquake earthquake) {
-        lastEarthquake = (earthquake.getProperties().getUpdated() > 0) ? earthquake.getProperties().getUpdated() : earthquake.getProperties().getTime();
-        return earthquake;
-    }
+
 }

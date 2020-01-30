@@ -20,6 +20,7 @@ public class Earthquake {
     private String countryCode;
     private String country;
     private Properties properties;
+    private long modifiedTime;
     @JsonSerialize(using = GeoJsonSerializer.class)
     @JsonDeserialize(using = GeoJsonDeserializer.class)
     private GeoJson geometry;
