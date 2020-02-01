@@ -11,7 +11,7 @@ public class Properties {
     private Double mag;
     private String place;
     private long time;
-    private long updated;
+    private Long updated;
     private Integer tz;
     private String url;
     private String detail;

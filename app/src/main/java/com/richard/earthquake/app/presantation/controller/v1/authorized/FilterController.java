@@ -36,7 +36,7 @@ public class FilterController {
                 .onErrorResume(throwable -> errorUtil.getResponseEntityAsMono(throwable));
     }
 
-    @DeleteMapping("")
+    @PutMapping("")
     public Mono<ResponseEntity<Filter>> removeFilter(ServerWebExchange serverWebExchange, @RequestBody Filter filter) {
         return filterService.removeFilter(MyObjectMapper.getUserId(serverWebExchange), filter)
                 .map(ResponseEntity::ok);

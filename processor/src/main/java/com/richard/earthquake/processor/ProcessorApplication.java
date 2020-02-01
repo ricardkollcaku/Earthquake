@@ -1,6 +1,5 @@
 package com.richard.earthquake.processor;
 
-import com.richard.earthquake.processor.data.model.Earthquake;
 import com.richard.earthquake.processor.data.repo.EarthquakeRepo;
 import com.richard.earthquake.processor.domain.services.ApiService;
 import com.richard.earthquake.processor.domain.services.EarthquakeService;
@@ -11,9 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import reactor.core.publisher.Flux;
-
-import java.time.Duration;
 
 @SpringBootApplication
 public class ProcessorApplication implements CommandLineRunner {
@@ -30,19 +26,15 @@ public class ProcessorApplication implements CommandLineRunner {
         SpringApplication.run(ProcessorApplication.class, args);
     }
 
-
+    /*
+        db.earthquake.createIndex(
+        { modifiedTime: 1 } ,
+        { name: "earthquakeIndex" }
+    )*/
     @Override
     public void run(String... args) throws Exception {
-        Flux.range(0, 240)
-                .map(this::getByMonthRemoving);
-               // .subscribe(System.out::println);
+
     }
 
-    private String getByMonthRemoving(Integer integer) {
-        DateTime dateTime = DateTime.now(DateTimeZone.UTC);
-        String currentTime, previewTime;
-        currentTime = dateTime.minusMonths(integer).toString();
-        previewTime = dateTime.minusMonths(integer+1).toString();
-        return currentTime + "  " + previewTime;
-    }
+
 }

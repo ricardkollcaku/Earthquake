@@ -5,6 +5,7 @@ import com.richard.earthquake.processor.data.dto.EarthquakeDto;
 import com.richard.earthquake.processor.data.model.Earthquake;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
@@ -25,7 +26,16 @@ public class ObjectMapper {
         earthquake.setCountry(earthquakeDto.getProperties().getPlace().substring(earthquake.getProperties().getPlace().lastIndexOf(" ") + 1));
         earthquake.setCountryCode(earthquake.getCountry() == null ? null : getCountryCode(earthquake));
         earthquake.setModifiedTime(earthquakeDto.getProperties().getUpdated() == null ? earthquakeDto.getProperties().getTime() : earthquakeDto.getProperties().getUpdated());
+        earthquake.setMag(earthquakeDto.getProperties().getMag());
+        earthquake.setTime(earthquakeDto.getProperties().getTime());
         return earthquake;
+    }
+
+    public static Mono<Earthquake> mapMono(EarthquakeDto earthquakeDto) {
+        return Mono.just(earthquakeDto)
+                .map(ObjectMapper::map)
+                .onErrorResume(throwable -> Mono.empty());
+
     }
 
     private static String getCountryCode(Earthquake earthquake) {
@@ -38,6 +48,11 @@ public class ObjectMapper {
                 countryCode = entry.getValue().toUpperCase();
                 break;
             }
+        }
+
+        if (countryCode == null) {
+            if (earthquake.getCountry().length() == 2)
+                countryCode = earthquake.getCountry();
         }
 
         return countryCode;

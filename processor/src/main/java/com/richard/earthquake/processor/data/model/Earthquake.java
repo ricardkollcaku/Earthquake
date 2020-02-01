@@ -22,6 +22,8 @@ public class Earthquake {
     private String type;
     private Properties properties;
     private long modifiedTime;
+    private long time;
+    private double mag;
     @JsonSerialize(using = GeometrySerializer.class)
     @JsonDeserialize(using = GeometryDeserializer.class)
     private Geometry geometry;

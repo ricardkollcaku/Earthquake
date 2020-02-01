@@ -36,7 +36,7 @@ public class EarthquakeController {
     }
 
     @GetMapping("/all")
-    public Mono<ResponseEntity<List<Earthquake>>> findAllEarthquakesForUser(@RequestParam Integer pageNumber, @RequestParam Integer elementPerPage, @RequestParam String country, @RequestParam Integer mag) {
+    public Mono<ResponseEntity<List<Earthquake>>> findAllEarthquakesForUser(@RequestParam Integer pageNumber, @RequestParam Integer elementPerPage, @RequestParam(required = false) String country, @RequestParam(required = false) Integer mag) {
         return earthquakeService.getAllFilteredEarthquake(PageRequest.of(pageNumber, elementPerPage), country, mag)
                 .collectList()
                 .map(ResponseEntity::ok)

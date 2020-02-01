@@ -49,9 +49,9 @@ public class ApiService {
     }
 
     private Flux<Earthquake> getLast30MonthEarthquakes() {
-        return Flux.range(0, 720)
+        return Flux.range(0, 1440)
                 .map(integer -> integer * 10)
-                .delayElements(Duration.ofSeconds(10))
+                .delayElements(Duration.ofSeconds(4))
                 .flatMap(this::getByMonthRemoving);
     }
 
@@ -61,11 +61,12 @@ public class ApiService {
         currentTime = dateTime.minusDays(integer).toString();
         previewTime = dateTime.minusDays(integer + 10).toString();
         System.out.println(currentTime + " " + previewTime + "  " + integer);
-        return getQueriedEarthquake(currentTime, previewTime, getWebClient());
+        return getQueriedEarthquake(currentTime, previewTime, getWebClient()).retryBackoff(30, Duration.ofSeconds(10));
     }
 
     private Flux<Earthquake> getLastMonthEarthquakes() {
-        return getEarthquakeByUrl("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson", getWebClient());
+        return getEarthquakeByUrl("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson", getWebClient())
+                .retryBackoff(30, Duration.ofSeconds(10));
     }
 
     private Flux<Earthquake> getFirsAllNewElements() {
@@ -75,7 +76,8 @@ public class ApiService {
         String currentTime, previewTime;
         currentTime = dateTime.toString();
         previewTime = dateTime2.toString();
-        return getQueriedEarthquake(currentTime, previewTime, getWebClient());
+        return getQueriedEarthquake(currentTime, previewTime, getWebClient())
+                .retryBackoff(30, Duration.ofSeconds(10));
 
     }
 
@@ -98,7 +100,8 @@ public class ApiService {
     private Flux<Earthquake> getLastHoursEarthquake() {
 
         return Flux.interval(Duration.ofMinutes(1))
-                .flatMap(aLong -> getEarthquakeByUrl("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson"));
+                .flatMap(aLong -> getEarthquakeByUrl("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson"))
+                .retryBackoff(30, Duration.ofSeconds(10));
 
     }
 
@@ -120,7 +123,8 @@ public class ApiService {
 
     private Flux<Earthquake> getDailyEarthquake() {
         return Flux.interval(Duration.ofMinutes(10)).flatMap(aLong -> getEarthquakeByUrl(
-                "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"));
+                "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"))
+                .retryBackoff(30, Duration.ofSeconds(10));
     }
 
     Flux<Earthquake> getEarthquakeByUrl(String url, WebClient webClient) {
@@ -129,7 +133,7 @@ public class ApiService {
                 .exchange()
                 .flatMap(clientResponse -> clientResponse.bodyToMono(EarthquakesDto.class))
                 .flatMapIterable(EarthquakesDto::getEarthquakes)
-                .map(ObjectMapper::map)
+                .flatMap(ObjectMapper::mapMono)
                 .log()
                 .retryBackoff(100, Duration.ofSeconds(30));
     }
@@ -138,7 +142,7 @@ public class ApiService {
         return WebClient.create(url).get().exchange()
                 .flatMap(clientResponse -> clientResponse.bodyToMono(EarthquakesDto.class))
                 .flatMapIterable(EarthquakesDto::getEarthquakes)
-                .map(ObjectMapper::map);
+                .flatMap(ObjectMapper::mapMono);
     }
 
     private Flux<Earthquake> getQueriedRequestByTime(String previewTime, String currentTime) {

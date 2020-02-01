@@ -15,10 +15,10 @@ import org.locationtech.jts.geom.Geometry;
 public class Filter {
     String name;
     String country;
+    String countryCode;
     @JsonSerialize(using = GeometrySerializer.class)
     @JsonDeserialize(using = GeometryDeserializer.class)
     private Geometry geometry;
     private double minMagnitude;
-
 
 }

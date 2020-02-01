@@ -55,7 +55,7 @@ public class EarthquakeService {
         if (criteria != null)
             query.addCriteria(criteria);
         query.with(of);
-        query.with(Sort.by(new Sort.Order(Sort.Direction.DESC, "properties.time")));
+        query.with(Sort.by(new Sort.Order(Sort.Direction.DESC, "modifiedTime")));
         return reactiveMongoTemplate.find(query, Earthquake.class);
     }
 
@@ -70,5 +70,6 @@ public class EarthquakeService {
             return Criteria.where("country").is(country);
         return Criteria.where("properties.mag").gte(mag).andOperator(Criteria.where("country").is(country));
     }
+
 
 }
