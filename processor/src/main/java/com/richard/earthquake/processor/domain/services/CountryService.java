@@ -2,6 +2,7 @@ package com.richard.earthquake.processor.domain.services;
 
 import com.richard.earthquake.processor.data.model.Country;
 import com.richard.earthquake.processor.data.repo.CountryRepo;
+import com.richard.earthquake.processor.domain.util.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -27,7 +28,13 @@ public class CountryService {
 
     private Flux<Country> getDistinctCountries() {
         return earthquakeService.findDistinctByCountry()
-                .map(Country::new);
+                .map(Country::new)
+                .map(this::setCountryCode);
+    }
+
+    private Country setCountryCode(Country country) {
+        country.setCountryCode(ObjectMapper.getCountryCode(country.getCountry()));
+        return country;
     }
 
 

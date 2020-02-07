@@ -1,11 +1,10 @@
 package com.richard.earthquake.processor;
 
+import com.richard.earthquake.processor.data.repo.CountryRepo;
 import com.richard.earthquake.processor.data.repo.EarthquakeRepo;
 import com.richard.earthquake.processor.domain.services.ApiService;
 import com.richard.earthquake.processor.domain.services.EarthquakeService;
 import com.richard.earthquake.processor.domain.services.StreamProvider;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -21,6 +20,8 @@ public class ProcessorApplication implements CommandLineRunner {
     EarthquakeService earthquakeService;
     @Autowired
     EarthquakeRepo earthquakeRepo;
+    @Autowired
+    CountryRepo countryRepo;
 
     public static void main(String[] args) {
         SpringApplication.run(ProcessorApplication.class, args);
@@ -33,7 +34,9 @@ public class ProcessorApplication implements CommandLineRunner {
     )*/
     @Override
     public void run(String... args) throws Exception {
-
+        countryRepo.findAll()
+                .filter(country -> country.getCountryCode() == null);
+           //     .subscribe(country -> System.out.println(country.getCountry()));
     }
 
 
