@@ -39,6 +39,8 @@ public class WebSecurityConfig {
                 .pathMatchers("/api/v1/users/register").permitAll()
                 .pathMatchers("/api/v1/heartBeat/*").permitAll()
                 .pathMatchers("/api/v1/users/forgotPassword/*").permitAll()
+                .pathMatchers("/api/v1/earthquake/all").permitAll()
+
                 .anyExchange()
                 .authenticated()
                 .and()

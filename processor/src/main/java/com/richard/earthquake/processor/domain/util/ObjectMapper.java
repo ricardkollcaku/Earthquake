@@ -22,7 +22,7 @@ public class ObjectMapper {
         earthquake.setProperties(earthquakeDto.getProperties());
         earthquake.setDepth(earthquakeDto.getGeometry().getCoordinates().get(2));
         earthquake.setGeometry(new GeometryFactory().createPoint(new Coordinate(earthquakeDto.getGeometry().getCoordinates().get(0), earthquakeDto.getGeometry().getCoordinates().get(1))));
-        earthquake.setCountry(earthquakeDto.getProperties().getPlace().substring(earthquake.getProperties().getPlace().lastIndexOf(" ") + 1));
+        earthquake.setCountry(getCountryFromPlace(earthquakeDto.getProperties().getPlace()));
         earthquake.setCountryCode(earthquake.getCountry() == null ? null : getCountryCode(earthquake.getCountry()));
         earthquake.setModifiedTime(earthquakeDto.getProperties().getUpdated() == null ? earthquakeDto.getProperties().getTime() : earthquakeDto.getProperties().getUpdated());
         earthquake.setMag(earthquakeDto.getProperties().getMag());
@@ -43,7 +43,7 @@ public class ObjectMapper {
             generateCountryCodes();
 
         for (Map.Entry<String, String> entry : countryCodes.entrySet()) {
-            if (entry.getKey().toLowerCase().contains(country.toLowerCase())) {
+            if (country.toLowerCase().contains(entry.getKey().toLowerCase())) {
                 countryCode = entry.getValue().toUpperCase();
                 break;
             }
@@ -55,6 +55,17 @@ public class ObjectMapper {
         }
 
         return countryCode;
+    }
+
+    public static String getCountryFromPlace(String place) {
+        if (place == null || place.length() == 0)
+            return null;
+        int index = place.lastIndexOf(',');
+
+        if (index != -1 && (index + 1) < place.length())
+            return place.substring(index + 1).trim();
+        return place.substring(place.lastIndexOf(" ") + 1).trim();
+
     }
 
     private static void generateCountryCodes() {

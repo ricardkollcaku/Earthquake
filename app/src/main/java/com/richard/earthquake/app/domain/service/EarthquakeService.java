@@ -39,13 +39,17 @@ public class EarthquakeService {
         Query query = new Query();
         query.addCriteria(new Criteria().orOperator(criterias));
         query.with(pageable);
-        query.with(Sort.by(new Sort.Order(Sort.Direction.DESC, "properties.time")));
+        query.with(Sort.by(new Sort.Order(Sort.Direction.DESC, "time")));
         return query;
     }
 
     private Criteria getEarthquakeCriteria(Filter filter) {
-        return Criteria.where("geometry").within(filter.getGeometry())
-                .andOperator(Criteria.where("properties.mag").gte(filter.getMinMagnitude()));
+  /*      return Criteria.where("geometry").within(filter.getGeometry())
+                .andOperator(Criteria.where("properties.mag").gte(filter.getMinMagnitude()));*/
+
+        return Criteria.where("country").is(filter.getCountry())
+                .andOperator(Criteria.where("mag").gte(filter.getMinMagnitude()));
+        //    return Criteria.where("mag").gte(filter.getMinMagnitude());
 
     }
 

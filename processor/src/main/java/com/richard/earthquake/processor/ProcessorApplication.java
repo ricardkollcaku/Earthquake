@@ -5,10 +5,13 @@ import com.richard.earthquake.processor.data.repo.EarthquakeRepo;
 import com.richard.earthquake.processor.domain.services.ApiService;
 import com.richard.earthquake.processor.domain.services.EarthquakeService;
 import com.richard.earthquake.processor.domain.services.StreamProvider;
+import com.richard.earthquake.processor.domain.util.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
 @SpringBootApplication
 public class ProcessorApplication implements CommandLineRunner {
@@ -36,7 +39,18 @@ public class ProcessorApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         countryRepo.findAll()
                 .filter(country -> country.getCountryCode() == null);
-           //     .subscribe(country -> System.out.println(country.getCountry()));
+        //     .subscribe(country -> System.out.println(country.getCountry()));
+
+
+        earthquakeRepo.saveAll(earthquakeRepo.findAll()
+                .parallel()
+                .runOn(Schedulers.parallel()).map(earthquake -> {
+            earthquake.setCountry(ObjectMapper.getCountryFromPlace(earthquake.getProperties().getPlace()));
+            earthquake.setCountryCode(ObjectMapper.getCountryCode(earthquake.getCountry()));
+            return earthquake;
+        })).doOnComplete(() -> System.out.println("mbaroiii"));
+        //        .subscribe();
+
     }
 
 

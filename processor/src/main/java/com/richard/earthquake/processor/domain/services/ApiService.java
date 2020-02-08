@@ -27,7 +27,7 @@ public class ApiService {
     @PostConstruct
     void getDataFromApi() {
         lastEventTime = new AtomicLong();
-        streamProvider.subscribe(listenToAllEarthquakes().log());
+     streamProvider.subscribe(listenToAllEarthquakes().log());
 
     }
 
