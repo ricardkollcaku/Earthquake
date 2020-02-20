@@ -21,7 +21,7 @@ public class EarthquakeService {
 
     @PostConstruct
     private void insertEarthquakes() {
-        earthquakeRepo.saveAll(streamProvider.getStream())
+       saveAll(streamProvider.getStream())
                 .doOnError(Throwable::printStackTrace)
                 .retry()
                 .subscribe();
@@ -34,4 +34,10 @@ public class EarthquakeService {
     public Mono<Earthquake> getLastEarthquake() {
         return earthquakeRepo.findTopByOrderByModifiedTimeDesc();
     }
+
+
+    public Flux<Earthquake> saveAll(Flux<Earthquake> stream){
+        return earthquakeRepo.saveAll(stream);
+    }
+
 }
