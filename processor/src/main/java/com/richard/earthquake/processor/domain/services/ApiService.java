@@ -27,16 +27,17 @@ public class ApiService {
     @PostConstruct
     void getDataFromApi() {
         lastEventTime = new AtomicLong();
-     streamProvider.subscribe(listenToAllEarthquakes().log());
+        streamProvider.subscribe(listenToAllEarthquakes().log());
+        earthquakeService.saveAll(getDailyEarthquake()).log().subscribe();
 
     }
 
     private Flux<Earthquake> listenToAllEarthquakes() {
-
+        
         return earthquakeService.getLastEarthquake()
                 .map(Earthquake::getModifiedTime)
                 .map(this::setLastEvent)
-                .flatMapMany(aLong -> Flux.merge(getFirsAllNewElements(), getQueriedEarthquake(), getDailyEarthquake(), getLastHoursEarthquake()))
+                .flatMapMany(aLong -> Flux.concat(getFirsAllNewElements(), Flux.merge(getQueriedEarthquake(), getLastHoursEarthquake())))
                 .filter(this::isNewEvent)
                 .map(this::updateLastEvent)
                 .switchIfEmpty(firstTimeServerStart())
@@ -122,7 +123,7 @@ public class ApiService {
     }
 
     private Flux<Earthquake> getDailyEarthquake() {
-        return Flux.interval(Duration.ofMinutes(10)).flatMap(aLong -> getEarthquakeByUrl(
+        return Flux.interval(Duration.ofHours(3)).flatMap(aLong -> getEarthquakeByUrl(
                 "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"))
                 .retryBackoff(30, Duration.ofSeconds(10));
     }
