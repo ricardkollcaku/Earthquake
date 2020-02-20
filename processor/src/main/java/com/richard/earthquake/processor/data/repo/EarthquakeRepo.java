@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Mono;
 
 public interface EarthquakeRepo extends ReactiveMongoRepository<Earthquake, String> {
-    Mono<Earthquake> findTopByOrderByModifiedTimeDesc();
+    Mono<Earthquake> findTopByOrderByTimeDesc();
 }

@@ -21,6 +21,8 @@ public class Filter {
     @JsonDeserialize(using = GeoJsonDeserializer.class)
     private GeoJsonPolygon geometry;
     private double minMagnitude;
+    private Boolean isNotificationEnabled = true;
+
 
 
 }

@@ -32,7 +32,7 @@ public class EarthquakeService {
     }
 
     public Mono<Earthquake> getLastEarthquake() {
-        return earthquakeRepo.findTopByOrderByModifiedTimeDesc();
+        return earthquakeRepo.findTopByOrderByTimeDesc();
     }
 
 

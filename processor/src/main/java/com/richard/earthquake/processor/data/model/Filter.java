@@ -20,5 +20,6 @@ public class Filter {
     @JsonDeserialize(using = GeometryDeserializer.class)
     private Geometry geometry;
     private double minMagnitude;
+    private Boolean isNotificationEnabled = true;
 
 }
