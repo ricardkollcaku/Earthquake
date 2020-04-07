@@ -15,7 +15,7 @@ import org.locationtech.jts.geom.Geometry;
 public class Filter {
     String name;
     String country;
-    String countryCode;
+    Short countryKey;
     @JsonSerialize(using = GeometrySerializer.class)
     @JsonDeserialize(using = GeometryDeserializer.class)
     private Geometry geometry;

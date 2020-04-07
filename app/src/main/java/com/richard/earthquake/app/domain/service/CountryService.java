@@ -12,6 +12,6 @@ public class CountryService {
     private CountryRepo countryRepo;
 
     public Flux<Country> findAllCountries(){
-        return countryRepo.findAll();
+        return countryRepo.findAll().distinct(Country::getKey);
     }
 }

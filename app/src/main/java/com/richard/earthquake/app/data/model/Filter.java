@@ -16,6 +16,7 @@ public class Filter {
 
     String name;
     String country;
+    Short countryKey;
     String countryCode;
     @JsonSerialize(using = GeoJsonSerializer.class)
     @JsonDeserialize(using = GeoJsonDeserializer.class)

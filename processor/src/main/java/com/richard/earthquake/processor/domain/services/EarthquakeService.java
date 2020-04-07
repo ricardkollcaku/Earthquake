@@ -27,9 +27,6 @@ public class EarthquakeService {
                 .subscribe();
     }
 
-    public Flux<String> findDistinctByCountry() {
-        return reactiveMongoTemplate.findDistinct("country", Earthquake.class, String.class);
-    }
 
     public Mono<Earthquake> getLastEarthquake() {
         return earthquakeRepo.findTopByOrderByTimeDesc();

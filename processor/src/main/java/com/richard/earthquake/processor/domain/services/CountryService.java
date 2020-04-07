@@ -21,21 +21,9 @@ public class CountryService {
     void initCountries() {
         countryRepo.count()
                 .filter(aLong -> aLong == 0)
-                .flatMapMany(aLong -> countryRepo.saveAll(getDistinctCountries()))
+                .flatMapMany(aLong -> countryRepo.saveAll(Flux.fromIterable(ObjectMapper.getCountries())))
                 .subscribe();
 
     }
-
-    private Flux<Country> getDistinctCountries() {
-        return earthquakeService.findDistinctByCountry()
-                .map(Country::new)
-                .map(this::setCountryCode);
-    }
-
-    private Country setCountryCode(Country country) {
-        country.setCountryCode(ObjectMapper.getCountryCode(country.getCountry()));
-        return country;
-    }
-
 
 }

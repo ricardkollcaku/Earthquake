@@ -42,14 +42,7 @@ public class ProcessorApplication implements CommandLineRunner {
         //     .subscribe(country -> System.out.println(country.getCountry()));
 
 
-        earthquakeRepo.saveAll(earthquakeRepo.findAll()
-                .parallel()
-                .runOn(Schedulers.parallel()).map(earthquake -> {
-            earthquake.setCountry(ObjectMapper.getCountryFromPlace(earthquake.getProperties().getPlace()));
-            earthquake.setCountryCode(ObjectMapper.getCountryCode(earthquake.getCountry()));
-            return earthquake;
-        })).doOnComplete(() -> System.out.println("mbaroiii"));
-        //        .subscribe();
+
 
     }
 

@@ -12,10 +12,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 public class Country {
     @Id
-    String country;
+    String id;
     String countryCode;
+    String country;
+    Short key;
 
-    public Country(String country) {
-        this.country = country;
-    }
 }

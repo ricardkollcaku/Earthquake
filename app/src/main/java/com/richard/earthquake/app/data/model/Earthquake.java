@@ -19,6 +19,7 @@ public class Earthquake {
     private String type;
     private String countryCode;
     private String country;
+    private Short countryKey;
     private Properties properties;
     private long modifiedTime;
     private long time;
