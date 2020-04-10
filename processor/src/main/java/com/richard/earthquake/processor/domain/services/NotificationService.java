@@ -22,9 +22,8 @@ public class NotificationService {
     void sendNotifications() {
         streamProvider.getStream()
                 .flatMap(earthquake -> filterBuyUser(earthquake)
-                        .map(user -> sendNotificationsToUser(earthquake, user)));
-
-
+                        .map(user -> sendNotificationsToUser(earthquake, user)))
+                .subscribe();
     }
 
     private Earthquake sendNotificationsToUser(Earthquake earthquake, User user) {
@@ -34,8 +33,9 @@ public class NotificationService {
 
     private Flux<User> filterBuyUser(Earthquake earthquake) {
         return userService.findAllUsers()
+                .filter(User::getIsNotificationEnabled)
                 .flatMap(user -> Flux.fromIterable(user.getFilters())
-                        .filter(filter -> filter.getMinMagnitude() < earthquake.getProperties().getMag() && filter.getGeometry().contains(earthquake.getGeometry()))
+                        .filter(filter -> filter.getMinMagnitude() <= earthquake.getProperties().getMag() && filter.getCountryKey().equals(earthquake.getCountryKey()))
                         .collectList()
                         .filter(filters -> filters.size() > 0)
                         .map(filters -> user));

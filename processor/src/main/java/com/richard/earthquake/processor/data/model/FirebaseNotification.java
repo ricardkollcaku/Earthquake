@@ -11,5 +11,4 @@ public class FirebaseNotification {
     private Object data;
     private String to;
 
-
 }

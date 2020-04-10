@@ -87,14 +87,28 @@ public class UserController {
                 .map(ResponseEntity::ok);
     }
 
-    @PutMapping("/setNotification/{token}")
-    public Mono<ResponseEntity<UserDto>> setToken(@PathVariable Boolean token, ServerWebExchange serverHttpRequest) {
-        return userService.setNotification(MyObjectMapper.getUserId(serverHttpRequest), token)
+    @PutMapping("/setNotification/{notification}")
+    public Mono<ResponseEntity<UserDto>> setNotification(@PathVariable Boolean notification, ServerWebExchange serverHttpRequest) {
+        return userService.setNotification(MyObjectMapper.getUserId(serverHttpRequest), notification)
                 .map(MyObjectMapper::map)
                 .map(ResponseEntity::ok)
                 .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_USER_NOT_EXIST_OR_AUTH_ERROR).build()))
                 .onErrorResume(throwable -> userErrorUtil.getResponseEntityAsMono(throwable));
     }
+
+
+    @PutMapping("/setSearchInFullDb/{inFullDb}")
+    public Mono<ResponseEntity<UserDto>> setSearchInFullDb(@PathVariable Boolean inFullDb, ServerWebExchange serverHttpRequest) {
+        return userService.setSearchInFullDb(MyObjectMapper.getUserId(serverHttpRequest), inFullDb)
+                .map(MyObjectMapper::map)
+                .map(ResponseEntity::ok)
+                .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).header(ErrorMessage.ERROR, ErrorMessage.USER_USER_NOT_EXIST_OR_AUTH_ERROR).build()))
+                .onErrorResume(throwable -> userErrorUtil.getResponseEntityAsMono(throwable));
+    }
+
+
+
+
 
     @GetMapping("/currentUser")
     public Mono<ResponseEntity<UserDto>> getCurrentUser(ServerWebExchange serverHttpRequest) {

@@ -39,7 +39,7 @@ public class PushNotificationService {
     }
 
     private Flux<String> getUserDeviceIds(User user) {
-        return Flux.just();
+        return Flux.fromIterable(user.getTokens());
     }
 
 
@@ -48,7 +48,7 @@ public class PushNotificationService {
         return WebClient.create("https://fcm.googleapis.com/fcm/send")
                 .post()
                 .header("Authorization", "key=" + KEY)
-                .syncBody(firebaseNotification)
+                .bodyValue(firebaseNotification)
                 .exchange()
                 .flatMap(clientResponse -> clientResponse.bodyToMono(String.class));
     }

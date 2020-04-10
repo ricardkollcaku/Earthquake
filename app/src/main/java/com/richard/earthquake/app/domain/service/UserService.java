@@ -51,7 +51,7 @@ public class UserService {
 
     private Mono<User> setTokenToUser(User user, String token) {
         if (user.getTokens().contains(token))
-            return Mono.empty();
+            return Mono.just(user);
         user.getTokens().add(token);
         return Mono.just(user);
     }
@@ -116,6 +116,18 @@ public class UserService {
 
     private User setNotificationToUser(User user, Boolean notification) {
         user.setIsNotificationEnabled(notification);
+        return user;
+    }
+
+
+    public Mono<User> setSearchInFullDb(Mono<String> userId, Boolean searchInFullDb) {
+        return findUser(userId)
+                .map(user -> setSearchInFullDbToUser(user, searchInFullDb))
+                .flatMap(this::save);
+    }
+
+    private User setSearchInFullDbToUser(User user, Boolean notification) {
+        user.setFullDatabaseSearch(notification);
         return user;
     }
 }

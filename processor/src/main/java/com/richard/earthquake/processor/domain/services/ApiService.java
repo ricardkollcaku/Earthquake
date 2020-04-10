@@ -33,7 +33,7 @@ public class ApiService {
     }
 
     private Flux<Earthquake> listenToAllEarthquakes() {
-        
+
         return earthquakeService.getLastEarthquake()
                 .map(Earthquake::getModifiedTime)
                 .map(this::setLastEvent)

@@ -25,5 +25,4 @@ public class Filter {
     private Boolean isNotificationEnabled = true;
 
 
-
 }

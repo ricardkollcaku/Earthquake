@@ -2,8 +2,10 @@ package com.richard.earthquake.app.domain.service;
 
 import com.richard.earthquake.app.data.model.Earthquake;
 import com.richard.earthquake.app.data.model.Filter;
+import com.richard.earthquake.app.data.model.LastEarthquakes;
 import com.richard.earthquake.app.data.model.User;
 import com.richard.earthquake.app.data.repo.EarthquakeRepo;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,15 +28,19 @@ public class EarthquakeService {
     ReactiveMongoTemplate reactiveMongoTemplate;
 
     public Flux<Earthquake> getAllUserEarthquakesPageable(Mono<String> userId, Pageable pageable) {
-        return userService.findUser(userId).flatMapIterable(User::getFilters)
-                .map(this::getEarthquakeCriteria).collectList()
-                .flatMap(criteria -> getFiltersQuery(criteria, pageable))
-                .flatMapMany(query -> reactiveMongoTemplate.find(query, Earthquake.class))
-                .switchIfEmpty(getAllFilteredEarthquake(pageable, null, null));
+        return userService.findUser(userId)
+                .flatMapMany(user ->
+                       Flux.just(user)
+                        .flatMapIterable(User::getFilters)
+                        .map(this::getEarthquakeCriteria).collectList()
+                        .flatMap(criteria -> getFiltersQuery(criteria, pageable))
+                        .flatMapMany(query -> user.isFullDatabaseSearch()?reactiveMongoTemplate.find(query, Earthquake.class):reactiveMongoTemplate.find(query, LastEarthquakes.class))
+                        .switchIfEmpty(getAllFilteredEarthquake(pageable, null, null,user.isFullDatabaseSearch())))
+                ;
     }
 
     private Mono<Query> getFiltersQuery(List<Criteria> criteria, Pageable pageable) {
-        if (criteria.size()==0)
+        if (criteria.size() == 0)
             return Mono.empty();
         Criteria[] criterias = new Criteria[criteria.size()];
         criteria.toArray(criterias);
@@ -46,23 +52,24 @@ public class EarthquakeService {
     }
 
     private Criteria getEarthquakeCriteria(Filter filter) {
-  /*      return Criteria.where("geometry").within(filter.getGeometry())
-                .andOperator(Criteria.where("properties.mag").gte(filter.getMinMagnitude()));*/
 
         return Criteria.where("countryKey").is(filter.getCountryKey())
                 .andOperator(Criteria.where("mag").gte(filter.getMinMagnitude()));
-        //    return Criteria.where("mag").gte(filter.getMinMagnitude());
 
     }
 
-    public Flux<Earthquake> getAllFilteredEarthquake(Pageable of, Short countryKey, Integer mag) {
+    public Flux<Earthquake> getAllFilteredEarthquake(Pageable of, Short countryKey, Integer mag, Boolean fullDBSearch) {
         Criteria criteria = getCriteria(countryKey, mag);
         Query query = new Query();
         if (criteria != null)
             query.addCriteria(criteria);
         query.with(of);
         query.with(Sort.by(new Sort.Order(Sort.Direction.DESC, "time")));
+        if (fullDBSearch)
         return reactiveMongoTemplate.find(query, Earthquake.class);
+        else
+        return reactiveMongoTemplate.find(query, LastEarthquakes.class)
+                .map(lastEarthquakes -> lastEarthquakes);
     }
 
     private Criteria getCriteria(Short countryKey, Integer mag) {

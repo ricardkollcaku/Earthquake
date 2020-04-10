@@ -11,7 +11,7 @@ public class CountryService {
     @Autowired
     private CountryRepo countryRepo;
 
-    public Flux<Country> findAllCountries(){
+    public Flux<Country> findAllCountries() {
         return countryRepo.findAll().distinct(Country::getKey);
     }
 }

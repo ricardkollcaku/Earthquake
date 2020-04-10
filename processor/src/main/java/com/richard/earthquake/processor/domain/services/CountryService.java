@@ -1,6 +1,5 @@
 package com.richard.earthquake.processor.domain.services;
 
-import com.richard.earthquake.processor.data.model.Country;
 import com.richard.earthquake.processor.data.repo.CountryRepo;
 import com.richard.earthquake.processor.domain.util.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
