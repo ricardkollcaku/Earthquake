@@ -50,7 +50,8 @@ public class ApiService {
     }
 
     private Flux<Earthquake> getLast30MonthEarthquakes() {
-        return Flux.range(0, 1440)
+        // TODO from 37 to 1440 months
+        return Flux.range(0, 37)
                 .map(integer -> integer * 10)
                 .delayElements(Duration.ofSeconds(4))
                 .flatMap(this::getByMonthRemoving);

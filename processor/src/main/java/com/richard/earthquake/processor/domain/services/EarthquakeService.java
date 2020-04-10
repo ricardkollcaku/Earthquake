@@ -1,6 +1,7 @@
 package com.richard.earthquake.processor.domain.services;
 
 import com.richard.earthquake.processor.data.model.Earthquake;
+import com.richard.earthquake.processor.data.model.LastEarthquakes;
 import com.richard.earthquake.processor.data.repo.EarthquakeRepo;
 import com.richard.earthquake.processor.data.repo.LastEarthquakeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
+import java.time.Duration;
 
 @Service
 public class EarthquakeService {
@@ -26,6 +28,13 @@ public class EarthquakeService {
     private void insertEarthquakes() {
         insertAllStreamEarthquakes();
         insertLastStreamEarthquakes();
+        removeEarthquakes();
+    }
+
+    private void removeEarthquakes() {
+        Flux.interval(Duration.ofDays(1))
+                .flatMap(aLong -> lastEarthquakeRepo.deleteAllByTimeLessThan((System.currentTimeMillis() - 8640000000L)))
+                .subscribe();
     }
 
     private void insertAllStreamEarthquakes() {
@@ -36,8 +45,10 @@ public class EarthquakeService {
     }
 
     private void insertLastStreamEarthquakes() {
-        saveAll(streamProvider.getStream())
-                .filter(earthquake -> earthquake.getTime() > (System.currentTimeMillis() - 8640000000L))
+
+        lastEarthquakeRepo.saveAll(streamProvider.getStream()
+                .map(LastEarthquakes::new)
+                .filter(earthquake -> earthquake.getTime() > (System.currentTimeMillis() - 8640000000L)))
                 .doOnError(Throwable::printStackTrace)
                 .retry()
                 .subscribe();

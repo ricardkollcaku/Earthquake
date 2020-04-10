@@ -5,7 +5,6 @@ import com.richard.earthquake.app.data.model.Filter;
 import com.richard.earthquake.app.data.model.LastEarthquakes;
 import com.richard.earthquake.app.data.model.User;
 import com.richard.earthquake.app.data.repo.EarthquakeRepo;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

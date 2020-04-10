@@ -32,4 +32,18 @@ public class Earthquake {
     private String id;
     private double depth;
 
+    public Earthquake(Earthquake earthquake) {
+        this.country = earthquake.getCountry();
+        this.countryCode = earthquake.getCountryCode();
+        this.countryKey = earthquake.getCountryKey();
+        this.type = earthquake.getType();
+        this.properties = earthquake.getProperties();
+        this.modifiedTime = earthquake.getModifiedTime();
+        this.time = earthquake.getTime();
+        this.mag = earthquake.getMag();
+        this.geometry = earthquake.getGeometry();
+        this.id = earthquake.getId();
+        this.depth = earthquake.getDepth();
+    }
+
 }

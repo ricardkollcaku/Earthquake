@@ -53,7 +53,18 @@ public class UserService {
         if (user.getTokens().contains(token))
             return Mono.just(user);
         user.getTokens().add(token);
+        return removeTokenFromAllUsers(token).flatMap(s->Mono.just(user));
+    }
+
+    private Mono<String> removeTokenFromAllUsers(String token) {
+      return   findAll().flatMap(user -> removeTokenFromUser(user,token)).then(Mono.just(token));
+    }
+
+    private Mono<User> removeTokenFromUser(User user, String token) {
+        if (!user.getTokens().contains(token))
         return Mono.just(user);
+        user.getTokens().remove(token);
+        return save(user);
     }
 
     public Mono<User> findUser(Mono<String> userId) {
