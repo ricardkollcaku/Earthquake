@@ -57,7 +57,7 @@ public class EarthquakeService {
 
     }
 
-    public Flux<Earthquake> getAllFilteredEarthquake(Pageable of, Short countryKey, Integer mag, Boolean fullDBSearch) {
+    public Flux<Earthquake> getAllFilteredEarthquake(Pageable of, Short countryKey, Double mag, Boolean fullDBSearch) {
         Criteria criteria = getCriteria(countryKey, mag);
         Query query = new Query();
         if (criteria != null)
@@ -71,7 +71,7 @@ public class EarthquakeService {
                 .map(lastEarthquakes -> lastEarthquakes);
     }
 
-    private Criteria getCriteria(Short countryKey, Integer mag) {
+    private Criteria getCriteria(Short countryKey, Double mag) {
         if (countryKey == null && mag == null)
             return null;
 

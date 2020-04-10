@@ -40,7 +40,7 @@ public class WebSecurityConfig {
                 .pathMatchers("/api/v1/heartBeat/*").permitAll()
                 .pathMatchers("/api/v1/users/forgotPassword/*").permitAll()
                 .pathMatchers("/api/v1/earthquake/all").permitAll()
-
+                .pathMatchers("/api/v1/country").permitAll()
                 .anyExchange()
                 .authenticated()
                 .and()

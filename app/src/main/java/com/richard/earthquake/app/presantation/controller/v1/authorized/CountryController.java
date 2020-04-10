@@ -19,7 +19,7 @@ public class CountryController {
 
 
     @GetMapping("")
-    public Mono<ResponseEntity<List<Country>>> getAllFilters() {
+    public Mono<ResponseEntity<List<Country>>> getAllCountries() {
         return countryService.findAllCountries()
                 .collectList()
                 .map(ResponseEntity::ok);
