@@ -19,7 +19,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Earthquake {
     private String country;
     private String countryCode;
-    private String countryName;
     private Short countryKey;
     private String type;
     private Properties properties;
