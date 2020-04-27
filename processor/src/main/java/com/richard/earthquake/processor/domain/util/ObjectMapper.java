@@ -26,21 +26,25 @@ public class ObjectMapper {
         earthquake.setDepth(earthquakeDto.getGeometry().getCoordinates().get(2));
         earthquake.setGeometry(new GeometryFactory().createPoint(new Coordinate(earthquakeDto.getGeometry().getCoordinates().get(0), earthquakeDto.getGeometry().getCoordinates().get(1))));
         earthquake.setCountry(getCountryFromPlace(earthquakeDto.getProperties().getPlace()));
-        earthquake.setCountryCode(earthquake.getCountry() == null ? null : getCountryCode(earthquake.getCountry()));
-        earthquake.setCountryKey(earthquake.getCountry() == null ? null : getCountryKey(earthquake.getCountry()));
+        Optional<Country> country = getCountries().stream().filter(country1 -> country1.getId().equals(earthquake.getCountry())).findFirst();
+        earthquake.setCountryCode(earthquake.getCountry() == null ? null : getCountryCode(country));
+        earthquake.setCountryKey(earthquake.getCountry() == null ? null : getCountryKey(country));
+        earthquake.setCountryName(earthquake.getCountry() == null ? null : getCountryName(country));
         earthquake.setModifiedTime(earthquakeDto.getProperties().getUpdated() == null ? earthquakeDto.getProperties().getTime() : earthquakeDto.getProperties().getUpdated());
         earthquake.setMag(earthquakeDto.getProperties().getMag());
         earthquake.setTime(earthquakeDto.getProperties().getTime());
         return earthquake;
     }
 
-    public static String getCountryCode(String countryName) {
-        Optional<Country> country = getCountries().stream().filter(country1 -> country1.getId().equals(countryName)).findFirst();
+    private static String getCountryName(Optional<Country> country) {
+        return country.map(Country::getCountry).orElse(null);
+    }
+
+    public static String getCountryCode(Optional<Country> country) {
         return country.map(Country::getCountryCode).orElse(null);
     }
 
-    public static Short getCountryKey(String countryName) {
-        Optional<Country> country = getCountries().stream().filter(country1 -> country1.getId().equals(countryName)).findFirst();
+    public static Short getCountryKey(Optional<Country> country) {
         return country.map(Country::getKey).orElse(null);
     }
 

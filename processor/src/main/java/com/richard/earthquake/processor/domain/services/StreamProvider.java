@@ -17,7 +17,6 @@ public class StreamProvider {
 
     public StreamProvider() {
         emitterProcessor = DirectProcessor.create();
-        emitterProcessor.subscribe();
         emitterProcessor.doOnError(Throwable::printStackTrace);
         emitterProcessor.doOnComplete(() -> System.out.println("emmiter processor completed"));
     }

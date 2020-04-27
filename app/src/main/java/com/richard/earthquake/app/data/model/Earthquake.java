@@ -20,6 +20,7 @@ public class Earthquake {
     private String countryCode;
     private String country;
     private Short countryKey;
+    private String countryName;
     private Properties properties;
     private long modifiedTime;
     private long time;

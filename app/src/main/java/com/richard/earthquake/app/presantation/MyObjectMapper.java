@@ -34,8 +34,6 @@ public class MyObjectMapper {
 
     public static Mono<String> getUserId(ServerWebExchange serverWebExchange) {
         return serverWebExchange.getAttributes().get("userId") != null ? Mono.just(serverWebExchange.getAttributes().get("userId").toString()) : Mono.error(new DummyError(ErrorMessage.USER_USER_NOT_EXIST_OR_AUTH_ERROR, null, HttpStatus.NO_CONTENT));
-        //  return Mono.just("richard_kollcaku@hotmail.com");
-        //TODO per t fshi komentin
     }
 
     public static UserDto map(User user) {
