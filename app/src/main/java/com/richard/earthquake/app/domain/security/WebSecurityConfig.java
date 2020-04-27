@@ -41,6 +41,7 @@ public class WebSecurityConfig {
                 .pathMatchers("/api/v1/users/forgotPassword/*").permitAll()
                 .pathMatchers("/api/v1/earthquake/all").permitAll()
                 .pathMatchers("/api/v1/country").permitAll()
+                .pathMatchers("/socket").permitAll()
                 .anyExchange()
                 .authenticated()
                 .and()

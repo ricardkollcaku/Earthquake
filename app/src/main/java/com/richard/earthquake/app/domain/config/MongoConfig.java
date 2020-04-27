@@ -1,4 +1,4 @@
-package com.richard.earthquake.app.domain;
+package com.richard.earthquake.app.domain.config;
 
 
 import com.mongodb.MongoClient;
