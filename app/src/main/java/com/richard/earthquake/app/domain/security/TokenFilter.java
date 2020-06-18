@@ -43,7 +43,6 @@ public class TokenFilter implements ServerAuthenticationConverter {
 
     private User putUserIdInWebExchange(User user, ServerWebExchange serverWebExchange) {
         serverWebExchange.getAttributes().put("userId", user.getEmail());
-        // Todo serverWebExchange.getAttributes().put("user", user);
         return user;
     }
 

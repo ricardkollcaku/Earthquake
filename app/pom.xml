@@ -9,10 +9,10 @@
         <relativePath/>
     </parent>
     <groupId>com.richard.earthquake</groupId>
-    <artifactId>app</artifactId>
+    <artifactId>Earthquake</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>app</name>
-    <description>Demo project for Spring Boot</description>
+    <name>Earthquake</name>
+    <description>Main service for earthquake</description>
 
     <properties>
         <java.version>11</java.version>

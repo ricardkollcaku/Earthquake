@@ -14,8 +14,7 @@ public class UserDto {
     private String firstName;
     private String lastName;
     private Boolean isNotificationEnabled;
-    private boolean fullDatabaseSearch=false;
-
+    private boolean fullDatabaseSearch = false;
 
 
 }

@@ -35,7 +35,7 @@ public class NotificationService {
 
     private NotificationData CreateNotificationData(Earthquake earthquake) {
         NotificationData notificationData = new NotificationData();
-        notificationData.setTitle("Earthquake "+earthquake.getCountry()+" "+earthquake.getMag());
+        notificationData.setTitle("Earthquake " + earthquake.getCountry() + " " + earthquake.getMag());
         notificationData.setMag(earthquake.getMag());
         notificationData.setDescription(earthquake.getProperties().getTitle());
         return notificationData;
@@ -45,7 +45,7 @@ public class NotificationService {
         return userService.findAllUsers()
                 .filter(User::getIsNotificationEnabled)
                 .flatMap(user -> Flux.fromIterable(user.getFilters())
-                        .filter(filter ->filter.getIsNotificationEnabled() &&filter.getMinMagnitude() <= earthquake.getProperties().getMag() && filter.getCountryKey().equals(earthquake.getCountryKey()))
+                        .filter(filter -> filter.getIsNotificationEnabled() && filter.getMinMagnitude() <= earthquake.getProperties().getMag() && filter.getCountryKey().equals(earthquake.getCountryKey()))
                         .collectList()
                         .filter(filters -> filters.size() > 0)
                         .map(filters -> user));

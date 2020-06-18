@@ -29,12 +29,12 @@ public class EarthquakeService {
     public Flux<Earthquake> getAllUserEarthquakesPageable(Mono<String> userId, Pageable pageable) {
         return userService.findUser(userId)
                 .flatMapMany(user ->
-                       Flux.just(user)
-                        .flatMapIterable(User::getFilters)
-                        .map(this::getEarthquakeCriteria).collectList()
-                        .flatMap(criteria -> getFiltersQuery(criteria, pageable))
-                        .flatMapMany(query -> user.isFullDatabaseSearch()?reactiveMongoTemplate.find(query, Earthquake.class):reactiveMongoTemplate.find(query, LastEarthquakes.class))
-                        .switchIfEmpty(getAllFilteredEarthquake(pageable, null, null,user.isFullDatabaseSearch())))
+                        Flux.just(user)
+                                .flatMapIterable(User::getFilters)
+                                .map(this::getEarthquakeCriteria).collectList()
+                                .flatMap(criteria -> getFiltersQuery(criteria, pageable))
+                                .flatMapMany(query -> user.isFullDatabaseSearch() ? reactiveMongoTemplate.find(query, Earthquake.class) : reactiveMongoTemplate.find(query, LastEarthquakes.class))
+                                .switchIfEmpty(getAllFilteredEarthquake(pageable, null, null, user.isFullDatabaseSearch())))
                 ;
     }
 
@@ -65,10 +65,10 @@ public class EarthquakeService {
         query.with(of);
         query.with(Sort.by(new Sort.Order(Sort.Direction.DESC, "time")));
         if (fullDBSearch)
-        return reactiveMongoTemplate.find(query, Earthquake.class);
+            return reactiveMongoTemplate.find(query, Earthquake.class);
         else
-        return reactiveMongoTemplate.find(query, LastEarthquakes.class)
-                .map(lastEarthquakes -> lastEarthquakes);
+            return reactiveMongoTemplate.find(query, LastEarthquakes.class)
+                    .map(lastEarthquakes -> lastEarthquakes);
     }
 
     private Criteria getCriteria(Short countryKey, Double mag) {

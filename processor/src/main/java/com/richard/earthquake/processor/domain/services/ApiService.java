@@ -28,8 +28,6 @@ public class ApiService {
     void getDataFromApi() {
         lastEventTime = new AtomicLong();
         streamProvider.subscribe(listenToAllEarthquakes().log());
-        earthquakeService.saveAll(getDailyEarthquake()).log().subscribe();
-
     }
 
     private Flux<Earthquake> listenToAllEarthquakes() {
@@ -37,7 +35,7 @@ public class ApiService {
         return earthquakeService.getLastEarthquake()
                 .map(Earthquake::getModifiedTime)
                 .map(this::setLastEvent)
-                .flatMapMany(aLong -> Flux.concat(getFirsAllNewElements(), Flux.merge(getQueriedEarthquake(), getLastHoursEarthquake())))
+                .flatMapMany(aLong -> Flux.concat(getFirsAllNewElements(), Flux.merge(getQueriedEarthquake(), getLastHoursEarthquake(), getDailyEarthquake())))
                 .filter(this::isNewEvent)
                 .map(this::updateLastEvent)
                 .switchIfEmpty(firstTimeServerStart())
@@ -50,8 +48,7 @@ public class ApiService {
     }
 
     private Flux<Earthquake> getLast30MonthEarthquakes() {
-        // TODO from 37 to 1440 months
-        return Flux.range(0, 37)
+        return Flux.range(0, 1440)
                 .map(integer -> integer * 10)
                 .delayElements(Duration.ofSeconds(4))
                 .flatMap(this::getByMonthRemoving);

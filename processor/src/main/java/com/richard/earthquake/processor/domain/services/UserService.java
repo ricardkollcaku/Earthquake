@@ -15,8 +15,9 @@ public class UserService {
     Flux<User> findAllUsers() {
         return usersRepo.findAll();
     }
+
     public Mono<String> removeTokenFromAllUsers(String token) {
-        return   findAllUsers().flatMap(user -> removeTokenFromUser(user,token)).then(Mono.just(token));
+        return findAllUsers().flatMap(user -> removeTokenFromUser(user, token)).then(Mono.just(token));
     }
 
     private Mono<User> removeTokenFromUser(User user, String token) {
