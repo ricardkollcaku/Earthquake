@@ -1,26 +1,15 @@
 package com.richard.earthquake.app.domain.config;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.async.ByteArrayFeeder;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.richard.earthquake.app.data.model.ChatMessage;
-import com.richard.earthquake.app.data.model.ChatUser;
 import com.richard.earthquake.app.domain.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.time.Duration;
-import java.util.Objects;
 
 @Component("ReactiveWebSocketHandler")
 public class ReactiveWebSocketHandler implements WebSocketHandler {
@@ -30,24 +19,29 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
     private ObjectMapper objectMapper;
     @Override
     public Mono<Void> handle(WebSocketSession webSocketSession) {
-
-        String earthquakeId = "ci39380544";
+        if (webSocketSession.getHandshakeInfo().getHeaders().get("earthquakeId") == null || webSocketSession.getHandshakeInfo().getHeaders().get("earthquakeId").get(0) == null)
+            return Mono.empty();
+        String earthquakeId = webSocketSession.getHandshakeInfo().getHeaders().get("earthquakeId").get(0);
 
         return webSocketSession.send(
                 chatService.getStreamForEarthquake(earthquakeId)
-                .flatMap(this::getJsonFromChatMessage)
-                .map(webSocketSession::textMessage).log())
+                        .flatMap(this::getJsonFromChatMessage)
+                        .map(webSocketSession::textMessage).log())
                 .and(webSocketSession.receive()
-                .map(WebSocketMessage::getPayloadAsText).log())
-              ;
+                        .map(WebSocketMessage::getPayloadAsText)
+                        .flatMap(this::getChatMessageFromJson)
+                        .map(chatService::addMessage))
+                ;
     }
 
-    Mono<String> getJsonFromChatMessage(ChatMessage chatMessage){
-    StringBuilder stringBuilder = new StringBuilder();
+    Mono<String> getJsonFromChatMessage(ChatMessage chatMessage) {
+        StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("{\"message\":\"");
         stringBuilder.append(chatMessage.getMessage());
         stringBuilder.append("\",\"earthquakeId\":\"");
         stringBuilder.append(chatMessage.getEarthquakeId());
+        stringBuilder.append("\",\"id\":\"");
+        stringBuilder.append(chatMessage.getId());
         stringBuilder.append("\",\"createdTime\":");
         stringBuilder.append(chatMessage.getCreatedTime());
         stringBuilder.append(",\"user\":{\"id\":\"");
@@ -61,9 +55,15 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
     }
 
 
-    void test(){
-        Jackson2JsonDecoder jackson2JsonDecoder = new Jackson2JsonDecoder();
-
+    Mono<ChatMessage> getChatMessageFromJson(String json) {
+        try {
+            ChatMessage chatMessage = objectMapper.readValue(json, ChatMessage.class);
+            chatMessage.setCreatedTime(System.currentTimeMillis());
+            return Mono.just(chatMessage);
+        } catch (JsonProcessingException e) {
+            System.out.println(e);
+            return Mono.empty();
+        }
     }
 
 }

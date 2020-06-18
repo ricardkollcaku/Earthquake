@@ -1,7 +1,6 @@
 package com.richard.earthquake.app.domain.service;
 
 import com.richard.earthquake.app.data.model.ChatMessage;
-import com.richard.earthquake.app.data.model.Earthquake;
 import com.richard.earthquake.app.data.repo.ChatMessageRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,15 +29,18 @@ public class ChatService {
         chatMessageRepo.saveAll(getMessageStream()).subscribe();
     }
 
-    public Flux<ChatMessage> getMessageStream(){
+    public Flux<ChatMessage> getMessageStream() {
         return messageReceiver;
     }
 
-    public void addMessage(ChatMessage chatMessage){
+    public ChatMessage addMessage(ChatMessage chatMessage) {
+        System.out.println(chatMessage.toString());
         messageReceiver.onNext(chatMessage);
+        return chatMessage;
     }
 
-    public Flux<ChatMessage> getStreamForEarthquake(String earthquakeId){
+
+    public Flux<ChatMessage> getStreamForEarthquake(String earthquakeId) {
         return getMessageStream().filter(chatMessage -> chatMessage.getEarthquakeId().equals(earthquakeId));
     }
 }
