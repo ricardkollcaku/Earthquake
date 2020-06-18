@@ -107,9 +107,6 @@ public class UserController {
     }
 
 
-
-
-
     @GetMapping("/currentUser")
     public Mono<ResponseEntity<UserDto>> getCurrentUser(ServerWebExchange serverHttpRequest) {
         return userService.findUser(MyObjectMapper.getUserId(serverHttpRequest))

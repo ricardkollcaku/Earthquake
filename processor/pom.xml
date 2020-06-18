@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.richard.earthquake</groupId>
-    <artifactId>processor</artifactId>
+    <artifactId>EarthquakeProcessor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>processor</name>
-    <description>Demo project for Spring Boot</description>
+    <name>EarthquakeProcessor</name>
+    <description>Processor for earthquakes</description>
 
     <properties>
         <java.version>11</java.version>

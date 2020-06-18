@@ -26,9 +26,9 @@ public class ObjectMapper {
         earthquake.setDepth(earthquakeDto.getGeometry().getCoordinates().get(2));
         earthquake.setGeometry(new GeometryFactory().createPoint(new Coordinate(earthquakeDto.getGeometry().getCoordinates().get(0), earthquakeDto.getGeometry().getCoordinates().get(1))));
         Optional<Country> country = getCountries().stream().filter(country1 -> country1.getId().equals(getCountryFromPlace(earthquakeDto.getProperties().getPlace()))).findFirst();
-        earthquake.setCountryCode(earthquake.getCountry() == null ? null : getCountryCode(country));
-        earthquake.setCountryKey(earthquake.getCountry() == null ? null : getCountryKey(country));
-        earthquake.setCountry(earthquake.getCountry() == null ? null : getCountryName(country));
+        earthquake.setCountryCode(!country.isPresent() ? null : getCountryCode(country));
+        earthquake.setCountryKey(!country.isPresent() ? null : getCountryKey(country));
+        earthquake.setCountry(!country.isPresent() ? null : getCountryName(country));
         earthquake.setModifiedTime(earthquakeDto.getProperties().getUpdated() == null ? earthquakeDto.getProperties().getTime() : earthquakeDto.getProperties().getUpdated());
         earthquake.setMag(earthquakeDto.getProperties().getMag());
         earthquake.setTime(earthquakeDto.getProperties().getTime());

@@ -35,7 +35,7 @@ public class ApiService {
         return earthquakeService.getLastEarthquake()
                 .map(Earthquake::getModifiedTime)
                 .map(this::setLastEvent)
-                .flatMapMany(aLong -> Flux.concat(getFirsAllNewElements(), Flux.merge(getQueriedEarthquake(), getLastHoursEarthquake(),getDailyEarthquake())))
+                .flatMapMany(aLong -> Flux.concat(getFirsAllNewElements(), Flux.merge(getQueriedEarthquake(), getLastHoursEarthquake(), getDailyEarthquake())))
                 .filter(this::isNewEvent)
                 .map(this::updateLastEvent)
                 .switchIfEmpty(firstTimeServerStart())

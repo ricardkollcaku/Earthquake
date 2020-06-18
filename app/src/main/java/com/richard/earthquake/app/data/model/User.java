@@ -24,7 +24,7 @@ public class User {
     private List<Filter> filters;
     private Set<String> tokens;
     private Boolean isNotificationEnabled = true;
-    private boolean fullDatabaseSearch=false;
+    private boolean fullDatabaseSearch = false;
 
 
     public String getSystemRole() {
